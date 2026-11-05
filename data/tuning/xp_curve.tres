@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="XpCurve" format=3]
+
+[ext_resource type="Script" path="res://game/progression/xp_curve.gd" id="1_xp"]
+
+[resource]
+script = ExtResource("1_xp")
+base = 12.0
+growth = 1.5
+exponent = 1.3

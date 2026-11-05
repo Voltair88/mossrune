@@ -22,6 +22,10 @@ Step 'lint'
 $out = & gdscript-formatter lint @dirs 2>&1 | Out-String
 if ($LASTEXITCODE -ne 0) { Fail 'lint' $out }
 
+Step 'import (refreshes the class_name cache)'
+$out = & godot_console --headless --path . --import 2>&1 | Out-String
+if ($LASTEXITCODE -ne 0) { Fail 'import' $out }
+
 Step 'parse (warnings as errors)'
 $out = & godot_console --headless --path . -s res://tools/check_scripts.gd 2>&1 | Out-String
 if ($LASTEXITCODE -ne 0) { Fail 'parse' $out }
