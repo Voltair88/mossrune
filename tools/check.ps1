@@ -44,7 +44,7 @@ $banned = [ordered]@{
     'Image.create( (use create_empty)'   = '\bImage\.create\('
 }
 $hits = foreach ($name in $banned.Keys) {
-    $scripts | Select-String -Pattern $banned[$name] | ForEach-Object { "  ${name}: $($_.Path):$($_.LineNumber)" }
+    $scripts | Select-String -CaseSensitive -Pattern $banned[$name] | ForEach-Object { "  ${name}: $($_.Path):$($_.LineNumber)" }
 }
 if ($hits) { Fail 'anti-patterns' ($hits -join "`n") }
 
