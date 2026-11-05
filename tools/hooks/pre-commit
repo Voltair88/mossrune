@@ -1,0 +1,3 @@
+#!/bin/sh
+# Installed by: git config core.hooksPath tools/hooks
+exec pwsh -NoProfile -File tools/check.ps1
