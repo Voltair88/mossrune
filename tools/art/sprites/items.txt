@@ -1,4 +1,4 @@
-# Pickups. Gem: cyan diamond (XP). Heart: light green (healing).
+# Pickups. Gem: cyan diamond (XP). Heart: mid green (healing).
 ! kind item
 
 @ gem
