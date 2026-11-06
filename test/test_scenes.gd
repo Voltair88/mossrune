@@ -73,11 +73,23 @@ func test_main_scene_runs_and_the_clock_ticks() -> void:
 
 
 func test_ui_only_listens_and_gameplay_never_touches_ui() -> void:
-	# UI may connect to Events and read nothing else of the game.
-	var game_classes := ["Battle", "PlayerBrain", "EnemyBrain", "BattleView", "Run", "PlayerView"]
+	# UI may connect to Events and send only its requests; it reads nothing else
+	# of the game.
+	var game_classes := [
+		"Battle",
+		"PlayerBrain",
+		"EnemyBrain",
+		"BattleView",
+		"Run",
+		"PlayerView",
+		"Session",
+	]
+	var ui_requests := ["upgrade_chosen", "settings_changed", "restart_requested"]
+	var emit := RegEx.create_from_string(r"(\w+)\.emit\(")
 	for path in _scripts(UI_DIR):
 		var code := FileAccess.get_file_as_string(path)
-		assert_false(code.contains(".emit("), path + " emits nothing")
+		for m in emit.search_all(code):
+			assert_has(ui_requests, m.get_string(1), path + " emits only UI requests")
 		for c: String in game_classes:
 			assert_false(
 				RegEx.create_from_string("\\b%s\\b" % c).search(code) != null,

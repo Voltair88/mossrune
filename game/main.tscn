@@ -2,9 +2,17 @@
 
 [ext_resource type="Script" path="res://game/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://game/ui/hud.gd" id="2_hud"]
+[ext_resource type="Script" path="res://game/ui/level_up_screen.gd" id="3_level_up"]
+[ext_resource type="Script" path="res://game/ui/pause_menu.gd" id="4_pause"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_main")
 
 [node name="Hud" type="CanvasLayer" parent="."]
 script = ExtResource("2_hud")
+
+[node name="LevelUpScreen" type="CanvasLayer" parent="."]
+script = ExtResource("3_level_up")
+
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+script = ExtResource("4_pause")

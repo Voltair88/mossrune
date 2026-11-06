@@ -1,7 +1,8 @@
 class_name Hud
 extends CanvasLayer
-## HP, clock and level in the pixel font, plus the end-of-run panel.
-## Read-only: everything it shows arrives through Events.
+## HP, XP, clock and level in the pixel font, plus the end-of-run panel.
+## Everything it shows arrives through Events; the only thing it sends is
+## restart_requested from the end panel.
 
 const FONT := preload("res://assets/fonts/pixel.png")
 const FONT_SIZE := 8
@@ -10,9 +11,13 @@ const BAR_BACK := Color("333c57")
 const BAR_FILL := Color("ffcd75")
 const INK := Color("f4f4f4")
 const PANEL := Color(Color("1a1c2c"), 0.85)
-const PANEL_SIZE := Vector2(200, 72)
+const PANEL_SIZE := Vector2(200, 88)
 const STRIP_HEIGHT := 14.0
 const BAR_SIZE := Vector2(200, 6)
+const XP_FILL := Color("73eff7")
+const XP_HEIGHT := 2.0
+## The end panel ignores input briefly, so a held attack doesn't skip it.
+const RESTART_DELAY_SEC := 0.75
 const SECONDS_PER_MINUTE := 60
 ## The bar blinks below this share of HP (low HP shows by shape and motion too).
 const LOW_HP_SHARE := 0.25
@@ -20,6 +25,9 @@ const LOW_BLINK_HZ := 2.0
 const BLINK_DUTY := 0.5
 
 var _bar_fill: ColorRect
+var _xp_fill: ColorRect
+var _again: Button
+var _best: Label
 var _clock: Label
 var _level: Label
 var _panel: ColorRect
@@ -38,11 +46,28 @@ func _ready() -> void:
 	_panel.visible = false
 	add_child(_panel)
 	_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_KEEP_SIZE)
-	_title = _label("", Control.PRESET_TOP_WIDE, _panel)
-	_stats = _label("", Control.PRESET_HCENTER_WIDE, _panel)
-	_label("ATTACK: AGAIN", Control.PRESET_BOTTOM_WIDE, _panel)
+	_panel.theme = UiStyle.make_theme()
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	_panel.add_child(column)
+	column.set_anchors_and_offsets_preset(
+		Control.PRESET_FULL_RECT,
+		Control.PRESET_MODE_MINSIZE,
+		MARGIN,
+	)
+	_title = UiStyle.label("", column)
+	_stats = UiStyle.label("", column)
+	_best = UiStyle.label("", column)
+	_again = Button.new()
+	_again.text = "AGAIN"
+	_again.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_again.pressed.connect(_on_again_pressed)
+	column.add_child(_again)
 
 	Events.player_hit.connect(_on_player_hit)
+	Events.player_healed.connect(_on_player_hit)
+	Events.xp_collected.connect(_on_xp_collected)
+	Events.level_up.connect(_on_level_up)
 	Events.time_changed.connect(_on_time_changed)
 	Events.run_ended.connect(_on_run_ended)
 
@@ -64,6 +89,10 @@ func _layout_bottom_strip() -> void:
 	_bar_fill.color = BAR_FILL
 	_bar_fill.size = BAR_SIZE
 	back.add_child(_bar_fill)
+	_xp_fill = ColorRect.new()
+	_xp_fill.color = XP_FILL
+	_xp_fill.size = Vector2(0, XP_HEIGHT)
+	strip.add_child(_xp_fill)
 	_clock = _label("00:00", Control.PRESET_CENTER_LEFT, strip)
 	_level = _label("LV 1", Control.PRESET_CENTER_RIGHT, strip)
 
@@ -101,7 +130,30 @@ func _on_time_changed(seconds: int) -> void:
 	_clock.text = clock_text(seconds)
 
 
-func _on_run_ended(won: bool, seconds: float, level: int) -> void:
+func _on_xp_collected(xp: int, needed: int) -> void:
+	_xp_fill.size.x = get_viewport().get_visible_rect().size.x * xp / needed
+
+
+func _on_level_up(level: int, _offer: Array[UpgradeData]) -> void:
+	_level.text = "LV %d" % level
+
+
+func _on_run_ended(
+	won: bool,
+	seconds: float,
+	level: int,
+	best_seconds: float,
+	best_level: int,
+) -> void:
 	_title.text = "THE SHRINE HOLDS" if won else "THE WILDS TAKE THE SHRINE"
 	_stats.text = "TIME %s   LEVEL %d" % [clock_text(floori(seconds)), level]
+	_best.text = "BEST %s   LEVEL %d" % [clock_text(floori(best_seconds)), best_level]
+	_again.disabled = true
 	_panel.visible = true
+	_again.grab_focus()
+	await get_tree().create_timer(RESTART_DELAY_SEC).timeout
+	_again.disabled = false
+
+
+func _on_again_pressed() -> void:
+	Events.restart_requested.emit()

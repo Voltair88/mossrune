@@ -12,12 +12,19 @@ const SEPARATION_STRENGTH := 120.0
 const MAX_ENEMY_RADIUS := 8.0
 ## Aim assist looks a little past the reach.
 const ASSIST_REACH_FACTOR := 1.5
+## A pickup is taken this far outside the player's body.
+const PICKUP_REACH_PX := 4.0
 
 var arena: ArenaData
 var feel: FeelTuning
 var player: PlayerBrain
 var enemies: Array[EnemyBrain] = []
 var rng: RandomNumberGenerator
+var drops: DropTable
+var gems: GemField
+var hearts: GemField
+## The enemy that hurt the player last, for the bot telemetry.
+var last_hit_by: StringName = &""
 ## Microseconds spent on enemy logic in the last step (the AI budget is 2 ms).
 var enemy_usec: int = 0
 ## Microseconds for the whole last step.
@@ -25,6 +32,7 @@ var step_usec: int = 0
 var _grid: SpatialGrid
 ## Separation is refreshed for half the enemies each frame, alternating.
 var _frame: int = 0
+var _xp_banked: int = 0
 
 
 func _init(
@@ -32,10 +40,14 @@ func _init(
 	player_stats: PlayerStats,
 	feel_tuning: FeelTuning,
 	random: RandomNumberGenerator,
+	drop_table: DropTable = null,
 ) -> void:
 	arena = arena_data
 	feel = feel_tuning
 	rng = random
+	drops = drop_table if drop_table != null else DropTable.new()
+	gems = GemField.new(drops.gem_cap)
+	hearts = GemField.new(drops.gem_cap)
 	player = PlayerBrain.new(player_stats, feel, arena.player_start())
 	_grid = SpatialGrid.new(arena.outer_rect(), GRID_CELL)
 
@@ -67,13 +79,17 @@ func step(delta: float, move: Vector2) -> bool:
 		if e.tick(delta, player.position, e.push, rng):
 			var reach := e.data.slam_radius_tiles * ArenaData.TILE + player.stats.radius_px
 			if e.position.distance_to(player.position) <= reach:
-				hurt = player.receive_hit(e.data.contact_damage, e.position) or hurt
+				hurt = _hurt_player(e) or hurt
 		e.position = arena.resolve(e.position, e.data.radius_px)
 	enemy_usec = Time.get_ticks_usec() - start
 
 	var hit := _swing_hits()
 	hurt = _contact() or hurt
 	_remove_dead()
+	if player.is_alive():
+		var reach := player.stats.radius_px + PICKUP_REACH_PX
+		_xp_banked += gems.collect(player.position, player.pickup_px(), reach, delta)
+		player.heal(hearts.collect(player.position, player.pickup_px(), reach, delta))
 	step_usec = Time.get_ticks_usec() - step_start
 	return hit or hurt
 
@@ -142,15 +158,35 @@ func _contact() -> bool:
 				strongest = _grid.found[k]
 	if strongest < 0:
 		return false
-	return player.receive_hit(enemies[strongest].data.contact_damage, enemies[strongest].position)
+	return _hurt_player(enemies[strongest])
 
 
-## Swap-remove, so removal doesn't shift the array.
+func _hurt_player(e: EnemyBrain) -> bool:
+	if not player.receive_hit(e.data.contact_damage, e.position):
+		return false
+	last_hit_by = e.data.id
+	return true
+
+
+## XP picked up since the last call.
+func take_xp() -> int:
+	var xp := _xp_banked
+	_xp_banked = 0
+	return xp
+
+
+## Swap-remove, so removal doesn't shift the array. The dead drop their gem,
+## and sometimes a heart.
 func _remove_dead() -> void:
 	var i := 0
 	while i < enemies.size():
-		if enemies[i].is_alive():
+		var e := enemies[i]
+		if e.is_alive():
 			i += 1
 		else:
+			if e.data.xp > 0:
+				gems.add(e.position, e.data.xp)
+				if rng.randf() < drops.heart_chance:
+					hearts.add(e.position, drops.heart_heal)
 			enemies[i] = enemies[enemies.size() - 1]
 			enemies.pop_back()

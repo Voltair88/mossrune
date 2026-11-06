@@ -9,6 +9,8 @@ var _rng := RandomNumberGenerator.new()
 
 
 func add_trauma(amount: float) -> void:
+	if not GameSettings.shake:
+		return
 	trauma = minf(trauma + amount, 1.0)
 
 

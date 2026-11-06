@@ -31,3 +31,13 @@ extends Resource
 @export var reaction_min_sec: float = 0.2
 @export var reaction_max_sec: float = 0.4
 @export var shake_on_kill: bool = false
+
+
+## Every enemy in a folder, by id.
+static func load_dir(path: String) -> Dictionary[StringName, EnemyData]:
+	var out: Dictionary[StringName, EnemyData] = { }
+	for f in DirAccess.get_files_at(path):
+		if f.ends_with(".tres"):
+			var d := load(path.path_join(f)) as EnemyData
+			out[d.id] = d
+	return out

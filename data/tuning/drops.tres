@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DropTable" format=3]
+
+[ext_resource type="Script" path="res://game/progression/drop_table.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+heart_chance = 0.02
+heart_heal = 20
+gem_cap = 150

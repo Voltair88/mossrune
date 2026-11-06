@@ -76,3 +76,31 @@ attack={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"device":-1,"physical_keycode":74), Object(InputEventKey,"device":-1,"physical_keycode":32), Object(InputEventJoypadButton,"device":-1,"button_index":0), Object(InputEventJoypadButton,"device":-1,"button_index":2)]
 }
+ui_accept={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194309), Object(InputEventKey,"device":-1,"physical_keycode":4194310), Object(InputEventKey,"device":-1,"physical_keycode":32), Object(InputEventKey,"device":-1,"physical_keycode":74), Object(InputEventJoypadButton,"device":-1,"button_index":0)]
+}
+ui_cancel={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194305), Object(InputEventJoypadButton,"device":-1,"button_index":1)]
+}
+ui_left={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194319), Object(InputEventKey,"device":-1,"physical_keycode":65), Object(InputEventJoypadButton,"device":-1,"button_index":13), Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":-1.0)]
+}
+ui_right={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194321), Object(InputEventKey,"device":-1,"physical_keycode":68), Object(InputEventJoypadButton,"device":-1,"button_index":14), Object(InputEventJoypadMotion,"device":-1,"axis":0,"axis_value":1.0)]
+}
+ui_up={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194320), Object(InputEventKey,"device":-1,"physical_keycode":87), Object(InputEventJoypadButton,"device":-1,"button_index":11), Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":-1.0)]
+}
+ui_down={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194322), Object(InputEventKey,"device":-1,"physical_keycode":83), Object(InputEventJoypadButton,"device":-1,"button_index":12), Object(InputEventJoypadMotion,"device":-1,"axis":1,"axis_value":1.0)]
+}
+pause={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"device":-1,"physical_keycode":4194305), Object(InputEventKey,"device":-1,"physical_keycode":80), Object(InputEventJoypadButton,"device":-1,"button_index":6)]
+}

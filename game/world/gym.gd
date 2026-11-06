@@ -16,7 +16,8 @@ func _ready() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = maxi(DebugArgs.current.seed_value, 0)
 	_view = BattleView.new()
-	_view.bot = DebugArgs.current.bot
+	if DebugArgs.current.bot != &"":
+		_view.bot = Bot.new(DebugArgs.current.bot)
 	add_child(_view)
 	_view.start(ARENA, rng)
 	_view.battle.player.god = DebugArgs.current.god

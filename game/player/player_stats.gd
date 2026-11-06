@@ -18,3 +18,5 @@ extends Resource
 @export var arc_deg: float = 120.0
 @export var pickup_radius_tiles: float = 1.5
 @export var radius_px: float = 5.0
+## HP regained per second (Regrowth). 0 at the start of a run.
+@export var regen_per_sec: float = 0.0

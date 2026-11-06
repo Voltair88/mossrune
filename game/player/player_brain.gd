@@ -28,6 +28,7 @@ var god: bool = false
 var flash_left: float = 0.0
 var _cooldown_left: float = 0.0
 var _knock_velocity: Vector2 = Vector2.ZERO
+var _regen: float = 0.0
 
 
 func _init(player_stats: PlayerStats, feel_tuning: FeelTuning, start: Vector2) -> void:
@@ -73,6 +74,7 @@ func tick(delta: float, move: Vector2, assist_target: Variant = null) -> void:
 	move = move.limit_length(1.0)
 	if move != Vector2.ZERO:
 		facing = move.normalized()
+	_tick_regen(dt)
 
 	match machine.state:
 		DEAD:
@@ -84,7 +86,8 @@ func tick(delta: float, move: Vector2, assist_target: Variant = null) -> void:
 				machine.go(IDLE)
 		ATTACK:
 			velocity = move * stats.speed_tiles * ArenaData.TILE * stats.attack_move_factor
-			if machine.time_in_state >= stats.attack_sec:
+			# Tempo can bring the cooldown under the pose; the pose then ends with it.
+			if machine.time_in_state >= minf(stats.attack_sec, stats.attack_cooldown_sec):
 				machine.go(IDLE)
 
 	if machine.state == IDLE or machine.state == MOVE:
@@ -124,3 +127,35 @@ func _start_swing(assist_target: Variant) -> void:
 	aim = facing
 	if assist_target is Vector2:
 		aim = Swing.assist(position, facing, assist_target, deg_to_rad(feel.aim_assist_deg) / 2)
+
+
+func heal(amount: int) -> void:
+	if not is_alive() or amount <= 0 or health.hp >= health.max_hp:
+		return
+	health.heal(amount)
+	Events.player_healed.emit(health.hp, health.max_hp)
+
+
+## Swaps in rebuilt stats (after an upgrade) and heals by heal_amount.
+func set_stats(new_stats: PlayerStats, heal_amount: int) -> void:
+	stats = new_stats
+	health.max_hp = stats.max_hp
+	health.hp = mini(health.hp, health.max_hp)
+	if is_alive():
+		health.heal(heal_amount)
+	Events.player_healed.emit(health.hp, health.max_hp)
+
+
+func pickup_px() -> float:
+	return stats.pickup_radius_tiles * ArenaData.TILE
+
+
+func _tick_regen(dt: float) -> void:
+	if stats.regen_per_sec <= 0.0 or health.hp >= health.max_hp:
+		_regen = 0.0
+		return
+	_regen += stats.regen_per_sec * dt
+	if _regen >= 1.0:
+		var whole := floori(_regen)
+		_regen -= whole
+		heal(whole)

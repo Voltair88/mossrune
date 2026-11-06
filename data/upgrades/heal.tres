@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://game/progression/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items_heart.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"heal"
+title = "MEND"
+text = "HEAL 30 HP"
+icon = ExtResource("2")
+cap = 0
+heal = 30
+filler = true

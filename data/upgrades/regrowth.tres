@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://game/progression/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons_regrowth.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"regrowth"
+title = "REGROWTH"
+text = "+0.5 HP PER SECOND"
+icon = ExtResource("2")
+stat = &"regen_per_sec"
+per_stack = 0.5
+percent = false
+cap = 3
+raises_damage = false
+heal = 0

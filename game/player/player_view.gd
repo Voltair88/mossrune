@@ -67,7 +67,7 @@ func _process(_delta: float) -> void:
 	var look := brain.aim if state == PlayerBrain.ATTACK else brain.facing
 	if look.x != 0.0:
 		_body.flip_h = look.x < 0.0
-	_body.material = FLASH if brain.flash_left > 0.0 else null
+	_body.material = FLASH if brain.flash_left > 0.0 and GameSettings.flashes else null
 	var invulnerable := brain.health.invulnerable_left()
 	_body.visible = (
 		state == PlayerBrain.DEAD or invulnerable <= 0.0

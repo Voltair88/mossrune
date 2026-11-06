@@ -2,8 +2,7 @@ class_name DebugArgs
 extends RefCounted
 ## Command line switches for testing, passed after "--":
 ## --seed=N --god --wave=N --level=N --spawn=<enemy>:<count> --show-states
-## --ui-variant=A|B|C (layout to compare while picking a UI) --bot=idle|circle
-## --perf-out=<path>
+## --bot=idle|circle|kite|wall_hug --perf-out=<path>
 
 ## The arguments of this process, parsed on first use.
 static var current: DebugArgs = DebugArgs.parse(OS.get_cmdline_user_args())
@@ -14,7 +13,6 @@ var wave: int = 1
 var level: int = 1
 var spawns: Dictionary[StringName, int] = { }
 var show_states: bool = false
-var ui_variant: StringName = &"A"
 var bot: StringName = &""
 var perf_out: String = ""
 var errors: PackedStringArray = []
@@ -42,10 +40,11 @@ static func parse(args: PackedStringArray) -> DebugArgs:
 					out.errors.append("expected --spawn=<enemy>:<count>, got " + arg)
 			"--show-states":
 				out.show_states = true
-			"--ui-variant":
-				out.ui_variant = StringName(value.to_upper())
 			"--bot":
-				out.bot = StringName(value)
+				if Bot.MOVES.has(StringName(value)):
+					out.bot = StringName(value)
+				else:
+					out.errors.append("unknown bot in " + arg)
 			"--perf-out":
 				out.perf_out = value
 			_:

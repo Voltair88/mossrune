@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://game/progression/upgrade_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/icons_tempo.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"tempo"
+title = "TEMPO"
+text = "-12% ATTACK COOLDOWN"
+icon = ExtResource("2")
+stat = &"attack_cooldown_sec"
+per_stack = -0.12
+percent = true
+cap = 5
+raises_damage = true
+heal = 0

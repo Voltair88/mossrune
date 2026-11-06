@@ -60,7 +60,7 @@ func _process(_delta: float) -> void:
 		_body.play(anim)
 	if brain.velocity.x != 0.0:
 		_body.flip_h = brain.velocity.x < 0.0
-	_body.material = FLASH if brain.flash_left > 0.0 else null
+	_body.material = FLASH if brain.flash_left > 0.0 and GameSettings.flashes else null
 	_body.modulate.a = SPAWN_ALPHA if brain.machine.state == EnemyBrain.SPAWN else 1.0
 	if _label:
 		_label.text = brain.machine.state
