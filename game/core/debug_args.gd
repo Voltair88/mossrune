@@ -2,7 +2,8 @@ class_name DebugArgs
 extends RefCounted
 ## Command line switches for testing, passed after "--":
 ## --seed=N --god --wave=N --level=N --spawn=<enemy>:<count> --show-states
-## --ui-variant=A|B|C --bot=idle|circle --perf-out=<path>
+## --ui-variant=A|B|C (layout to compare while picking a UI) --bot=idle|circle
+## --perf-out=<path>
 
 ## The arguments of this process, parsed on first use.
 static var current: DebugArgs = DebugArgs.parse(OS.get_cmdline_user_args())
