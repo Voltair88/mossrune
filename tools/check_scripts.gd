@@ -5,7 +5,7 @@ extends SceneTree
 const SKIP_DIRS: PackedStringArray = ["res://addons", "res://.godot"]
 
 
-func _init() -> void:
+func _initialize() -> void:
 	var failed: PackedStringArray = []
 	var count := 0
 	var self_path: String = (get_script() as Script).resource_path

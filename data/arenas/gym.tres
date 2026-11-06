@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ArenaData" format=3]
+
+[ext_resource type="Script" path="res://game/world/arena_data.gd" id="1_arena"]
+
+[resource]
+script = ExtResource("1_arena")
+size_tiles = Vector2i(40, 23)
+player_start_tile = Vector2i(14, 11)

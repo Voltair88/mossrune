@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ArenaData" format=3]
+
+[ext_resource type="Script" path="res://game/world/arena_data.gd" id="1_arena"]
+
+[resource]
+script = ExtResource("1_arena")
+size_tiles = Vector2i(64, 40)
+blocks = Array[Rect2i]([Rect2i(31, 18, 2, 2), Rect2i(12, 8, 1, 1), Rect2i(51, 8, 1, 1), Rect2i(12, 31, 1, 1), Rect2i(51, 31, 1, 1), Rect2i(22, 14, 1, 1), Rect2i(41, 14, 1, 1), Rect2i(22, 25, 1, 1), Rect2i(41, 25, 1, 1)])
+block_props = PackedStringArray("props_shrine", "props_pillar", "props_pillar", "props_pillar", "props_pillar", "props_pillar", "props_pillar", "props_pillar", "props_pillar")
+player_start_tile = Vector2i(32, 22)

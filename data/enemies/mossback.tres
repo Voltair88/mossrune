@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://game/enemies/enemy_data.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"mossback"
+sheet = "mossback"
+anim_move = &"walk"
+anim_windup = &"windup"
+anim_attack = &"slam"
+speed_tiles = 1.5
+hp = 80
+contact_damage = 20
+xp = 5
+radius_px = 7.0
+pattern = "slam"
+attack_range_tiles = 1.5
+windup_sec = 0.5
+attack_sec = 0.3
+recover_sec = 0.8
+slam_radius_tiles = 1.0
+shake_on_kill = true

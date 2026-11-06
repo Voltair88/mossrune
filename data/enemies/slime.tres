@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://game/enemies/enemy_data.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"slime"
+sheet = "slime"
+anim_move = &"move"
+anim_windup = &"windup"
+anim_attack = &"lunge"
+speed_tiles = 2.5
+hp = 15
+contact_damage = 5
+xp = 1
+radius_px = 6.0
+pattern = "lunge"
+attack_range_tiles = 2.0
+windup_sec = 0.3
+attack_sec = 0.25
+recover_sec = 0.5
+lunge_tiles = 1.5

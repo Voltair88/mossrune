@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://game/enemies/enemy_data.gd" id="1_enemy"]
+
+[resource]
+script = ExtResource("1_enemy")
+id = &"bat"
+sheet = "bat"
+anim_move = &"fly"
+speed_tiles = 4.0
+hp = 8
+contact_damage = 6
+xp = 1
+radius_px = 5.0
+pattern = "weave"
+weave_tiles = 1.0
+weave_hz = 1.5
