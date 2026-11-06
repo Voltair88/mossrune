@@ -105,3 +105,23 @@ func test_pause_toggles_send_settings_and_focus_returns() -> void:
 	await _tap(&"pause", "InputEventKey")
 	assert_eq(_focused(), choice, "focus goes back to the level-up choice")
 	assert_true(s.visible)
+
+
+func test_end_panel_focuses_again_and_restarts_with_accept() -> void:
+	for kind in KINDS:
+		var hud := Hud.new()
+		add_child_autofree(hud)
+		await wait_process_frames(1)
+		var asked := [0]
+		var on_restart := func() -> void:
+			asked[0] += 1
+		Events.restart_requested.connect(on_restart)
+		Events.run_ended.emit(false, 30.0, 2, 0.0, 0)
+		await wait_process_frames(1)
+		assert_true(_focused() is Button, kind + ": again has focus")
+		await _tap(&"ui_accept", kind)
+		assert_eq(asked[0], 0, kind + ": a press right away is ignored")
+		await wait_seconds(Hud.RESTART_DELAY_SEC + 0.1)
+		await _tap(&"ui_accept", kind)
+		Events.restart_requested.disconnect(on_restart)
+		assert_eq(asked[0], 1, kind + ": accept restarts")

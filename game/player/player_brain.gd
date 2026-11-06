@@ -106,7 +106,6 @@ func tick(delta: float, move: Vector2, assist_target: Variant = null) -> void:
 func receive_hit(damage: int, from: Vector2) -> bool:
 	if god or not health.take(damage):
 		return false
-	flash_left = feel.flash_sec
 	if health.is_dead():
 		machine.go(DEAD)
 		Events.player_died.emit()

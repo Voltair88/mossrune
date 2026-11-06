@@ -180,3 +180,39 @@ func test_buffered_attack_fires_when_the_cooldown_ends() -> void:
 	b.player.buffer.press()
 	_run(b, 0.12)
 	assert_eq(b.player.swing_id, first + 1, "the press 0.1 s early still swung")
+
+
+func test_hit_flashes_stay_at_three_a_second_with_capped_tempo() -> void:
+	var times := _flash_times(feel)
+	for k in range(1, times.size()):
+		assert_gte(times[k] - times[k - 1], feel.flash_gap_sec - DT, "gap %d" % k)
+	assert_between(times.size(), 7, 9, "flashes in 3 s: still about 3 a second")
+
+
+func test_without_the_gap_capped_tempo_flashes_five_times_a_second() -> void:
+	var no_gap := feel.duplicate() as FeelTuning
+	no_gap.flash_gap_sec = 0.0
+	assert_gt(_flash_times(no_gap).size(), 12, "the probe can see a too-fast flash")
+
+
+## Swings as fast as capped Tempo allows into a ring of dummies for 3 s. Returns
+## when each swing that made a flash first flashed.
+func _flash_times(tuning: FeelTuning) -> Array[float]:
+	var fast := stats.duplicate() as PlayerStats
+	fast.attack_cooldown_sec = 0.2
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1
+	var b := Battle.new(arena, fast, tuning, rng)
+	for i in 8:
+		var e := b.spawn(dummy, b.player.position + Vector2.from_angle(i * TAU / 8) * 14)
+		e.health.hp = 10000
+	var times: Array[float] = []
+	var flashed := { }
+	for i in roundi(3.0 / DT):
+		b.player.buffer.press()
+		b.step(DT, Vector2.ZERO)
+		for e in b.enemies:
+			if e.flash_left == tuning.flash_sec and not flashed.has(b.player.swing_id):
+				flashed[b.player.swing_id] = true
+				times.append((i + 1) * DT)
+	return times

@@ -148,6 +148,8 @@ func _on_run_ended(
 	_title.text = "THE SHRINE HOLDS" if won else "THE WILDS TAKE THE SHRINE"
 	_stats.text = "TIME %s   LEVEL %d" % [clock_text(floori(seconds)), level]
 	_best.text = "BEST %s   LEVEL %d" % [clock_text(floori(best_seconds)), best_level]
+	# Bot and debug runs don't set records, so there may be none to show.
+	_best.visible = best_level > 0
 	_again.disabled = true
 	_panel.visible = true
 	_again.grab_focus()

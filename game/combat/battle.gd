@@ -33,6 +33,10 @@ var _grid: SpatialGrid
 ## Separation is refreshed for half the enemies each frame, alternating.
 var _frame: int = 0
 var _xp_banked: int = 0
+## Hit flashes are at most 3 a second on the whole screen. Every enemy one swing
+## hits flashes together, which counts as one flash.
+var _flash_gap_left: float = 0.0
+var _flash_swing: int = -1
 
 
 func _init(
@@ -69,6 +73,7 @@ func step(delta: float, move: Vector2) -> bool:
 	player.tick(delta, move, _assist_target())
 	player.position = arena.resolve(player.position, player.stats.radius_px)
 
+	_flash_gap_left = maxf(_flash_gap_left - delta, 0.0)
 	_frame += 1
 	var start := Time.get_ticks_usec()
 	var hurt := false
@@ -141,6 +146,8 @@ func _swing_hits() -> bool:
 			continue
 		if e.take_hit(player.stats.damage, player.position, player.swing_id):
 			hit = true
+			if _may_flash(player.swing_id):
+				e.flash_left = feel.flash_sec
 			Events.enemy_hit.emit(e.position)
 	return hit
 
@@ -165,6 +172,19 @@ func _hurt_player(e: EnemyBrain) -> bool:
 	if not player.receive_hit(e.data.contact_damage, e.position):
 		return false
 	last_hit_by = e.data.id
+	if _may_flash(-1):
+		player.flash_left = feel.flash_sec
+	return true
+
+
+## swing is the swing that hit, or -1 for a hit on the player.
+func _may_flash(swing: int) -> bool:
+	if swing >= 0 and swing == _flash_swing:
+		return true
+	if _flash_gap_left > 0.0:
+		return false
+	_flash_gap_left = feel.flash_gap_sec
+	_flash_swing = swing
 	return true
 
 

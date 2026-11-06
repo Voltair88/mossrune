@@ -131,7 +131,6 @@ func take_hit(damage: int, from: Vector2, swing: int) -> bool:
 	last_swing_hit = swing
 	if not health.take(damage):
 		return false
-	flash_left = feel.flash_sec
 	if health.is_dead():
 		machine.go(DEAD)
 		Events.enemy_killed.emit(data.id, position, data.xp)

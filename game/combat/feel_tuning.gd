@@ -15,8 +15,11 @@ extends Resource
 ## The player's hurt pose, which also carries the knockback.
 @export var hurt_sec: float = 0.2
 @export var flash_sec: float = 0.034
+## Shortest time between two hit flashes anywhere on screen: at most 3 a second.
+@export var flash_gap_sec: float = 0.34
 @export var invulnerable_sec: float = 0.8
-@export var blink_hz: float = 8.0
+## At most 3 blinks a second, like the flashes.
+@export var blink_hz: float = 3.0
 @export var input_buffer_sec: float = 0.12
 ## Full width of the aim assist cone.
 @export var aim_assist_deg: float = 30.0
